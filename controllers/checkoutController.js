@@ -22,8 +22,8 @@ const handleCheckout = async (req, res) => {
     const session = await stripe.checkout.sessions.create({
         line_items: cartItems,
         mode: "payment",
-        success_url: "http://127.0.0.1:5173/success",
-        cancel_url: "http://127.0.0.1:5173/cancel"
+        success_url: "http://127.0.0.1:5173/success" || "https://exclusive-ecommerce-app.netlify.app/success",
+        cancel_url: "http://127.0.0.1:5173/cancel" || "https://exclusive-ecommerce-app.netlify.app/cancel"
     })
 
     res.send(JSON.stringify({

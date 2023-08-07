@@ -2,10 +2,12 @@
 const express = require("express")
 const server = express()
 const corsOptions = require("./config/corsOptions")
+const credentials = require("./middleware/credentials")
 const cors = require("cors")
 
 const PORT = process.env.PORT || 3500
 
+server.use(credentials)
 server.use(cors(corsOptions))
 server.use(express.static("public"))
 server.use(express.json())
