@@ -3,14 +3,14 @@ const stripe = require("stripe")("sk_test_51NbkexEQoG2EqoC4ZNnnQePfWgaeB4Kn06K8m
 
 
 const handleCheckout = async (req, res) => {
-    const cart = req.body.cart
-    if(!cart) {
+    const items = req.body.items
+    if(!items) {
         return res.status(400).json({"message": "Cart items is required!"})
     }
     console.log(req.body)
 
     let cartItems = []
-    cart.forEach(item => {
+    items.forEach(item => {
         cartItems.push(
             {
                 price: item.stripeID,
