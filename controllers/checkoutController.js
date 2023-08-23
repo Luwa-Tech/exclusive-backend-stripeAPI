@@ -7,7 +7,6 @@ const handleCheckout = async (req, res) => {
     if(!items) {
         return res.status(400).json({"message": "Cart items is required!"})
     }
-    console.log(req.body)
 
     let cartItems = []
     items.forEach(item => {
@@ -22,8 +21,8 @@ const handleCheckout = async (req, res) => {
     const session = await stripe.checkout.sessions.create({
         line_items: cartItems,
         mode: "payment",
-        success_url: "http://127.0.0.1:5173/success" || "https://exclusive-ecommerce-app.netlify.app/success",
-        cancel_url: "http://127.0.0.1:5173/cancel" || "https://exclusive-ecommerce-app.netlify.app/cancel"
+        success_url: "https://exclusive-ecommerce-app.netlify.app/cart/success",
+        cancel_url:  "https://exclusive-ecommerce-app.netlify.app/cart/cancel"
     })
 
     res.send(JSON.stringify({
