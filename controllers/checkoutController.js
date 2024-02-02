@@ -3,12 +3,12 @@ const stripe = require("stripe")("sk_test_51NbkexEQoG2EqoC4ZNnnQePfWgaeB4Kn06K8m
 
 
 const handleCheckout = async (req, res) => {
-    const items = req.body.items
+    const items = req.body.items;
     if(!items) {
-        return res.status(400).json({"message": "Cart items is required!"})
-    }
+        return res.status(400).json({"message": "Cart items is required!"});
+    };
 
-    let cartItems = []
+    let cartItems = [];
     items.forEach(item => {
         cartItems.push(
             {
@@ -23,11 +23,11 @@ const handleCheckout = async (req, res) => {
         mode: "payment",
         success_url: "https://exclusive-ecommerce-app.netlify.app/cart/success",
         cancel_url:  "https://exclusive-ecommerce-app.netlify.app/cart/cancel"
-    })
+    });
 
     res.send(JSON.stringify({
         url: session.url
-    }))
+    }));
    
 }
 
