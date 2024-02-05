@@ -20,8 +20,10 @@ server.listen(PORT, () => console.log(`server running on port ${PORT} successful
 // TODO
 
 // 1. Research and install project dependencies: express-session, nodemon, mongodb,
-// mongoose, cloudinary, passport, and multer.
+// mongoose, cloudinary, passport --DONE.
 
 // 2. Create MongoDB project database and figure out a way to connect with project. Create Mongoose data schemas and connect to database.
 
-// 3. Implement API code, test and repeat.
+// 3. Implement Admin authentication logic.
+
+// 4. Implement user auth, cart, and wishlist logic.
