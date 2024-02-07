@@ -1,6 +1,6 @@
-//change to dotenv file for better maintenance
-const stripe = require("stripe")("sk_test_51NbkexEQoG2EqoC4ZNnnQePfWgaeB4Kn06K8mJj6WfJknVoXc3TpbzGkeAIOOHwp3Z7YVUC8jD774DHtBsskgWJy00bHaMWBJ6")
+require("dotenv").config();
 
+const stripe = require("stripe")(process.env.STRIPE_KEY);
 
 const handleCheckout = async (req, res) => {
     const items = req.body.items;
