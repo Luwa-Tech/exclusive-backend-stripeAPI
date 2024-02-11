@@ -50,13 +50,3 @@ mongoose.connection.once('open', () => {
       console.log(`Server running on ${PORT} successfully`)
   })
 })
-
-
-// TODO
-
-// 1. Research and install project dependencies: express-session, nodemon, mongodb,
-// mongoose, cloudinary, passport --DONE.
-
-// 2. Create MongoDB project database and figure out a way to connect with project. Create Mongoose data schemas and connect to database.
-
-// 3. Implement user auth, cart, and wishlist logic.
