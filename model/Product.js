@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema({
     name: {
@@ -9,21 +9,21 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    imageURL: {
+    image: {
         type: String,
         required: true
     },
     stripeID: {
         type: String,
         required: true
-    }
+    },
     discount: {
         type: Number,
     },
     discountPrice: {
         type: Number
     },
-    cloudinaryID: {
+    cloudinaryId: {
         type: String
     },
     rating: {
@@ -34,4 +34,4 @@ const productSchema = new mongoose.Schema({
     },
 });
 
-module.exports = mongoose.model('Product', productSchema);
+module.exports = mongoose.model("Product", productSchema);
