@@ -41,7 +41,7 @@ server.use(passport.session());
 // }
 
 // newad()
-
+server.use("/", require("./routes/user"));
 server.use("/checkout", require("./routes/checkout"));
 
 mongoose.connection.once('open', () => {
