@@ -2,7 +2,7 @@ const LocalStrategy = require("passport-local").Strategy;
 const mongoose = require("mongoose");
 const User = require("../models/User");
 
-module.exports = function (passport) {
+const connectPassport = (passport) => {
   passport.use(
     new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
       User.findOne({ email: email.toLowerCase() }, (err, user) => {
@@ -39,3 +39,5 @@ module.exports = function (passport) {
     User.findById(id, (err, user) => done(err, user));
   });
 };
+
+module.exports = connectPassport;

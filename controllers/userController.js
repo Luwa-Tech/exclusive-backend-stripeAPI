@@ -1,4 +1,5 @@
 const User = require("../model/User");
+const passport = require("passport");
 
 const handleSignup = async (req, res) => {
     const {firstname, lastname, password, email} = req.body;
@@ -20,7 +21,6 @@ const handleSignup = async (req, res) => {
             "password": password
         });
 
-        console.log(result);
         await result.save();
         res.status(201).json({"message": "New user has been created!"});
     }catch(err) {
@@ -28,8 +28,29 @@ const handleSignup = async (req, res) => {
     }
 }
 
-// const handleLogin = async (req, res) => {
+const handleLogin = async (req, res, next) => {
+    const {email, password} = req.body;
 
-// }
+    if (!email || !password) {
+        return res.status(400).json({"message": "Email and Password is required!"});
+    }
 
-module.exports = {handleSignup};
+    passport.authenticate("local", (err, user, info) => {
+        if (err) {
+            return next(err);
+          }
+          if (!user) {
+            return res.status(401).json({ "message": "Invalid Email or Password." });
+          }
+  
+          req.logIn(user, (err) => {
+            if (err) {
+              return next(err);
+            }
+            console.log(`${user} logged in successfully`)
+            //res.redirect(req.session.returnTo || "https://exclusive-ecommerce-app.netlify.app/cart");
+          });
+    })(req, res, next);
+}
+
+module.exports = {handleSignup, handleLogin};
