@@ -4,4 +4,4 @@ const checkoutController = require("../controllers/checkoutController");
 
 router.post("/", checkoutController.handleCheckout);
 
-module.exports = router
+module.exports = router;

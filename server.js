@@ -9,6 +9,10 @@ const corsOptions = require("./config/corsOptions");
 const credentials = require("./middleware/credentials");
 const cors = require("cors");
 const connectDB = require("./config/dbConn");
+// const connectPassport = require("./config/passport")
+
+require("./config/passport")(passport);
+// connectPassport(passport);
 
 connectDB();
 
@@ -41,7 +45,7 @@ server.use(passport.session());
 // }
 
 // newad()
-
+server.use("/", require("./routes/user"));
 server.use("/checkout", require("./routes/checkout"));
 
 mongoose.connection.once('open', () => {
