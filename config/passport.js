@@ -1,6 +1,6 @@
 const LocalStrategy = require("passport-local").Strategy;
 const mongoose = require("mongoose");
-const User = require("../models/User");
+const User = require("../model/User");
 
 const connectPassport = (passport) => {
   passport.use(

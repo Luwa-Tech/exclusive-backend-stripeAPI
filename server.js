@@ -9,11 +9,10 @@ const corsOptions = require("./config/corsOptions");
 const credentials = require("./middleware/credentials");
 const cors = require("cors");
 const connectDB = require("./config/dbConn");
-const connectPassport = require("./config/passport")
+// const connectPassport = require("./config/passport")
 
-// require("./config/passport")(passport);
-console.log("debugging error")
-connectPassport(passport);
+require("./config/passport")(passport);
+// connectPassport(passport);
 
 connectDB();
 
