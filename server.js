@@ -8,12 +8,12 @@ const MongoStore = require("connect-mongo");
 const corsOptions = require("./config/corsOptions");
 const credentials = require("./middleware/credentials");
 const cors = require("cors");
-const dbConnection = mongoose.createConnection(process.env.DB_URI);
-// const connectDB = require("./config/dbConn");
+//const dbConnection = mongoose.createConnection(process.env.DB_URI);
+const connectDB = require("./config/dbConn");
 
 require("./config/passport")(passport);
 
-// connectDB();
+connectDB();
 
 const PORT = process.env.PORT || 3500;
 
@@ -23,8 +23,8 @@ server.use(express.static("public"));
 server.use(express.json());
 
 const sessionStore = MongoStore.create({
-  client: dbConnection.getClient(),
-  collection: "session"
+  client: mongoose.connection.getClient(),
+  collectionName: "session"
 });
 
 //Setup Sessions - stored in MongoDB
@@ -33,7 +33,10 @@ server.use(
       secret: "keyboard cat",
       resave: true,
       saveUninitialized: true,
-      store: sessionStore
+      store: sessionStore,
+      cookie: {
+        maxAge: 1000 * 60 * 60 * 24 //Equals 24 hours
+      }
     })
   );
 
