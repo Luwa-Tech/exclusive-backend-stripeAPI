@@ -8,13 +8,12 @@ const MongoStore = require("connect-mongo");
 const corsOptions = require("./config/corsOptions");
 const credentials = require("./middleware/credentials");
 const cors = require("cors");
-const connectDB = require("./config/dbConn");
-// const connectPassport = require("./config/passport")
+const dbConnection = mongoose.createConnection(process.env.DB_URI);
+// const connectDB = require("./config/dbConn");
 
 require("./config/passport")(passport);
-// connectPassport(passport);
 
-connectDB();
+// connectDB();
 
 const PORT = process.env.PORT || 3500;
 
@@ -23,13 +22,18 @@ server.use(cors(corsOptions));
 server.use(express.static("public"));
 server.use(express.json());
 
+const sessionStore = MongoStore.create({
+  client: dbConnection.getClient(),
+  collection: "session"
+});
+
 //Setup Sessions - stored in MongoDB
 server.use(
     session({
       secret: "keyboard cat",
       resave: true,
       saveUninitialized: true,
-      store: MongoStore.create({ client: mongoose.connection.getClient() }),
+      store: sessionStore
     })
   );
 
@@ -37,14 +41,6 @@ server.use(
 server.use(passport.initialize());
 server.use(passport.session());
 
-//TESTING PURPOSES
-// const newad = async () =>{
-//   const newAdmin = new Admin({name: "umar faruq"})
-// console.log(newAdmin.name)
-// await newAdmin.save()
-// }
-
-// newad()
 server.use("/", require("./routes/user"));
 server.use("/checkout", require("./routes/checkout"));
 
