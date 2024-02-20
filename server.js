@@ -24,15 +24,15 @@ server.use(express.json());
 
 const sessionStore = MongoStore.create({
   client: mongoose.connection.getClient(),
-  collectionName: "session"
+  collectionName: "sessions"
 });
 
 //Setup Sessions - stored in MongoDB
 server.use(
     session({
       secret: "keyboard cat",
-      resave: true,
-      saveUninitialized: true,
+      resave: false,
+      saveUninitialized: false,
       store: sessionStore,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 //Equals 24 hours
@@ -44,7 +44,8 @@ server.use(
 server.use(passport.initialize());
 server.use(passport.session());
 
-server.use("/", require("./routes/user"));
+server.use("/products", require("./routes/product"));
+server.use("/user", require("./routes/user"));
 server.use("/checkout", require("./routes/checkout"));
 
 mongoose.connection.once('open', () => {
