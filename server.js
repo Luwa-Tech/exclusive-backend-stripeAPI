@@ -47,6 +47,7 @@ server.use(passport.session());
 server.use("/", require("./routes/user"));
 server.use("/products", require("./routes/product"));
 server.use("/wishlist", require("./routes/wishlist"));
+server.use("/cart", require("./routes/cart"));
 server.use("/checkout", require("./routes/checkout"));
 
 mongoose.connection.once('open', () => {
