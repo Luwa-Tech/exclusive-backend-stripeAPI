@@ -1,4 +1,5 @@
 const Wishlist = require("../model/Wishlist");
+const Product = require("../model/Product");
 
 const getUserWishlist = async (req, res) => {
     if (!req.user) {
@@ -8,7 +9,27 @@ const getUserWishlist = async (req, res) => {
     try {
 
         const userWishlist = await Wishlist.findOne({ user: req.user._id }).populate("items");
-        res.status(200).json(userWishlist);
+
+        const pipeline = [
+            {
+                $match: { _id: { $in: userWishlist.map(item => item.product) } }
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "product"
+                }
+            },
+            {
+                $unwind: "$product"
+            }
+        ];
+
+        const products = await Product.aggregate(pipeline);
+
+        res.json(products);
 
     } catch (err) {
         res.status(500).json({ "message": `${err.message}` });
@@ -24,13 +45,15 @@ const addToWishlist = async (req, res) => {
 
     try {
         // Add product to user wishlist if not present and respond with updated document
+
+        //modify wishlist logic: --check if item is already in wishlist
         const wishlist = await Wishlist.findOneAndUpdate(
             { user: req.user._id },
             { $addToSet: { items: productId } },
             { new: true, upsert: true }
         );
-
-        res.json(wishlist);
+        
+        res.json({"message": "Product added to wishlist"});
 
     } catch (err) {
         res.status(500).json({ "message": `${err.message}` });
@@ -52,7 +75,7 @@ const removeFromWishlist = async (req, res) => {
             { new: true, }
         );
 
-        res.json(wishlist);
+        res.json({"message": "Product removed to wishlist"});
 
     } catch (err) {
         res.status(500).json({ "message": `${err.message}` });
