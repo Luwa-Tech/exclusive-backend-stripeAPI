@@ -8,7 +8,6 @@ const MongoStore = require("connect-mongo");
 const corsOptions = require("./config/corsOptions");
 const credentials = require("./middleware/credentials");
 const cors = require("cors");
-//const dbConnection = mongoose.createConnection(process.env.DB_URI);
 const connectDB = require("./config/dbConn");
 
 require("./config/passport")(passport);
