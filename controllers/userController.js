@@ -48,7 +48,8 @@ const handleLogin = async (req, res, next) => {
               return next(err);
             }
             console.log(`${user} logged in successfully`)
-            res.redirect(req.session.returnTo || "https://exclusive-ecommerce-app.netlify.app/cart");
+            res.status(202).json({"message": `${user} logged in successfully`})
+            // res.redirect(req.session.returnTo || "https://exclusive-ecommerce-app.netlify.app/cart");
           });
     })(req, res, next);
 }
