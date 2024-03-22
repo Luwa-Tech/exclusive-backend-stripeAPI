@@ -44,10 +44,10 @@ server.use(passport.initialize());
 server.use(passport.session());
 
 server.use("/", require("./routes/user"));
-server.use("/products", require("./routes/product"));
-server.use("/wishlist", require("./routes/wishlist"));
-server.use("/cart", require("./routes/cart"));
-server.use("/checkout", require("./routes/checkout"));
+server.use("/api/products", require("./routes/product"));
+server.use("/api/wishlist", require("./routes/wishlist"));
+server.use("/api/cart", require("./routes/cart"));
+server.use("/api/checkout", require("./routes/checkout"));
 
 mongoose.connection.once('open', () => {
   console.log('Connected to MongoDB')
