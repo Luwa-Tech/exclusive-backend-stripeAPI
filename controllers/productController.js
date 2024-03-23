@@ -11,12 +11,14 @@ const getAllProducts = async (req, res) => {
     res.json(products);
 }
 
-const addNewProduct = async (req, res) => {
-    if (!req.body) {
+const createProduct = async (req, res) => {
+    const {name, price, stripeID, image} = req.body
+
+    if (!name || !price || !stripeID || !image || !req.file) {
         return res.status(400).json({"message": "Product information is required"});
     }
     try {
-        const result = await cloudinary.uploader.upload(req.file.path);
+        const result = await cloudinary.v2.uploader.upload(req.file.path);
         console.log(result)
 
         const newProduct = await Product.create({
@@ -33,7 +35,7 @@ const addNewProduct = async (req, res) => {
 
         await newProduct.save();
         console.log(newProduct);
-        res.status(201).json({"message": "New product created!"});
+        res.status(201).json({"message": "New product created!", "Product": newProduct});
     } catch(err) {
         console.log(err.message);
     }
@@ -54,7 +56,7 @@ const getProduct = async (req, res) => {
 }
 
 module.exports = {
-    addNewProduct,
+    createProduct,
     getAllProducts,
     getProduct
 }

@@ -34,20 +34,19 @@ server.use(
       saveUninitialized: false,
       store: sessionStore,
       cookie: {
-        maxAge: 1000 * 60 * 60 * 24 //Equals 24 hours
+        maxAge: 1000 * 60 * 60 * 24
       }
     })
   );
 
-// Passport middleware
 server.use(passport.initialize());
 server.use(passport.session());
 
 server.use("/", require("./routes/user"));
-server.use("/api/products", require("./routes/product"));
-server.use("/api/wishlist", require("./routes/wishlist"));
-server.use("/api/cart", require("./routes/cart"));
-server.use("/api/checkout", require("./routes/checkout"));
+server.use("/products", require("./routes/product"));
+server.use("/wishlist", require("./routes/wishlist"));
+server.use("/cart", require("./routes/cart"));
+server.use("/checkout", require("./routes/checkout"));
 
 mongoose.connection.once('open', () => {
   console.log('Connected to MongoDB')
