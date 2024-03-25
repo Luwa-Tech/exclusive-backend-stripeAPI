@@ -34,12 +34,11 @@ server.use(
       saveUninitialized: false,
       store: sessionStore,
       cookie: {
-        maxAge: 1000 * 60 * 60 * 24 //Equals 24 hours
+        maxAge: 1000 * 60 * 60 * 24
       }
     })
   );
 
-// Passport middleware
 server.use(passport.initialize());
 server.use(passport.session());
 

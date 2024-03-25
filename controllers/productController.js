@@ -1,23 +1,27 @@
 const Product = require("../model/Product");
 const cloudinary = require("../config/cloudinary");
+const validateProductInfo = require("../utils/validateProductInfo");
 
 const getAllProducts = async (req, res) => {
     const products = await Product.find({});
-    console.log(products)
 
+    // Refactor statement
     if (!products) {
         return res.status(204).json({"message": "No products found"});
     }
     res.json(products);
 }
 
-const addNewProduct = async (req, res) => {
-    if (!req.body) {
-        return res.status(400).json({"message": "Product information is required"});
+const createProduct = async (req, res) => {
+    const {name, price, stripeID, image} = req.body;
+    const validationResult = validateProductInfo({name, price, image, stripeID});
+
+    if (!validationResult.isValid) {
+        return res.status(400).json({"message": validationResult.message});
     }
+
     try {
-        const result = await cloudinary.uploader.upload(req.file.path);
-        console.log(result)
+        const result = await cloudinary.v2.uploader.upload(req.file.path);
 
         const newProduct = await Product.create({
             name: req.body.name,
@@ -32,8 +36,7 @@ const addNewProduct = async (req, res) => {
         });
 
         await newProduct.save();
-        console.log(newProduct);
-        res.status(201).json({"message": "New product created!"});
+        res.status(201).json({"message": "New product created!", "Product": newProduct});
     } catch(err) {
         console.log(err.message);
     }
@@ -54,7 +57,7 @@ const getProduct = async (req, res) => {
 }
 
 module.exports = {
-    addNewProduct,
+    createProduct,
     getAllProducts,
     getProduct
 }
