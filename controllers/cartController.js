@@ -3,20 +3,12 @@ const Product = require("../model/Product");
 const generateSessionID = require("../utils/generateSessionID");
 
 const getUserCart = async (req, res) => {
-    const { sessionId } = req.body;
-
-    if (!sessionId && !req.user) {
+    if (!req.user) {
         return res.sendStatus(204);
     }
 
     try {
-        let cartItems;
-
-        if (req.user) {
-            cartItems = await Cart.findOne({ user: req.user._id }).populate("items");
-        } else {
-            cartItems = await Cart.findOne({ sessionId: sessionId }).populate("items");
-        }
+        const cartItems = cartItems = await Cart.findOne({ user: req.user._id }).populate("items");
 
         // Fetch product details for cart items using mongodb aggregation
         const pipeline = [
@@ -49,31 +41,19 @@ const getUserCart = async (req, res) => {
 }
 
 const addToCart = async (req, res) => {
-    const { productId, sessionId } = req.body;
+    const { productId } = req.body;
+
+    if (!req.user) {
+        return res.status(400).json({"message": "User must be logged in"});
+    }
 
     if (!productId) {
-        return res.status(400).json({ "message": "ProductId is required" })
+        return res.status(400).json({ "message": "ProductId is required" });
     }
 
     try {
-        let userCart;
-        let newSessionId;
-
-        if (req.user) {
-            userCart = await Cart.findOneAndUpdate(
-                { user: req.user._id },
-                { $addToSet: { items: { product: productId } } },
-                { upsert: true, new: true });
-
-        }
-
-        // create sessionid for anonymous user if none
-        if (!sessionId) {
-            newSessionId = generateSessionID();
-        }
-
-        userCart = await Cart.findOneAndUpdate(
-            { sessionId: sessionId || newSessionId },
+        const userCart = await Cart.findOneAndUpdate(
+            { user: req.user._id },
             { $addToSet: { items: { product: productId } } },
             { upsert: true, new: true }
         );
@@ -88,24 +68,20 @@ const addToCart = async (req, res) => {
 
 
 const removeFromCart = async (req, res) => {
-    const { productId, sessionId } = req.body;
+    const { productId } = req.body;
+
+    if (!req.user) {
+        return res.status(400).json({"message": "User must be logged in"})
+    }
 
     if (!productId) {
         return res.status(400).json({ "message": "ProductId is required" });
     }
 
     try {
-        let userCart;
-
-        if (req.user) {
-            userCart = await Cart.findOne({ user: req.user._id });
-            userCart.items.pull({ product: productId });
-            await userCart.save();
-        } else {
-            userCart = await Cart.findOne({ sessionId: sessionId });
-            userCart.items.pull({ product: productId });
-            await userCart.save();
-        }
+        const userCart = await Cart.findOne({ user: req.user._id });
+        userCart.items.pull({ product: productId });
+        await userCart.save();
 
         res.json({ "message": "Product has been removed from cart" });
 

@@ -53,7 +53,7 @@ const addToWishlist = async (req, res) => {
             { new: true, upsert: true }
         );
         
-        res.json({"message": "Product added to wishlist"});
+        res.status(200).json({"message": "Product added to wishlist"});
 
     } catch (err) {
         res.status(500).json({ "message": `${err.message}` });
@@ -75,7 +75,7 @@ const removeFromWishlist = async (req, res) => {
             { new: true, }
         );
 
-        res.json({"message": "Product removed to wishlist"});
+        res.status(200).json({"message": "Product removed to wishlist"});
 
     } catch (err) {
         res.status(500).json({ "message": `${err.message}` });
