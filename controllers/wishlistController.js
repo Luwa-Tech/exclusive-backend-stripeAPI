@@ -1,5 +1,4 @@
 const Wishlist = require("../model/Wishlist");
-const Product = require("../model/Product");
 
 const getUserWishlist = async (req, res) => {
     if (!req.user) {
@@ -7,30 +6,8 @@ const getUserWishlist = async (req, res) => {
     }
 
     try {
-
         const userWishlist = await Wishlist.findOne({ user: req.user._id }).populate("items");
-
-        const pipeline = [
-            {
-                $match: { _id: { $in: userWishlist.map(item => item.product) } }
-            },
-            {
-                $lookup: {
-                    from: "products",
-                    localField: "_id",
-                    foreignField: "_id",
-                    as: "product"
-                }
-            },
-            {
-                $unwind: "$product"
-            }
-        ];
-
-        const products = await Product.aggregate(pipeline);
-
-        res.json(products);
-
+        res.status(200).json(userWishlist);
     } catch (err) {
         res.status(500).json({ "message": `${err.message}` });
     }
