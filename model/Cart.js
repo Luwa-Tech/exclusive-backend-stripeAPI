@@ -13,6 +13,10 @@ const cartSchema = new mongoose.Schema({
       type: Number,
       default: 1
     },
+    stripeID: {
+      type: String,
+      required: true
+    },
   }],
 });
 

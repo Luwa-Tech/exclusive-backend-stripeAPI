@@ -14,10 +14,10 @@ const getUserCart = async (req, res) => {
 }
 
 const addToCart = async (req, res) => {
-    const { productId } = req.body;
+    const { productId, stripeId } = req.body;
 
-    if (!productId) {
-        return res.status(400).json({ "message": "ProductId is required" });
+    if (!productId || !stripeId) {
+        return res.status(400).json({ "message": "ProductId and stripeId is required" });
     }
 
     try {
@@ -28,13 +28,12 @@ const addToCart = async (req, res) => {
         if (!isItemInCart) {
             userCart.items.push({
                 id: productId,
-                quantity: 1
+                quantity: 1,
+                stripeID: stripeId
             })
-            // responseMessage = "Product added to cart";
             statusCode = 201;
         } else {
-            isItemInCart += 1;
-            // responseMessage = "Product quantity updated";
+            isItemInCart.quantity += 1;
             statusCode = 200;
         }
 
