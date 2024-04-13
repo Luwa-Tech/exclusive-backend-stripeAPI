@@ -1,3 +1,5 @@
+// TODO: Make function reusable
+
 const validateProductInfo = (product) => {
     const requiredFields = ["name", "price", "stripeID"];
     const missingFields = requiredFields.filter(field => {

@@ -44,9 +44,9 @@ server.use(passport.session());
 
 server.use("/", require("./routes/user"));
 server.use("/products", require("./routes/product"));
-server.use("/wishlist", require("./routes/wishlist"));
-server.use("/cart", require("./routes/cart"));
-server.use("/checkout", require("./routes/checkout"));
+server.use("/api/user/wishlist", require("./routes/wishlist"));
+server.use("/api/user/cart", require("./routes/cart"));
+server.use("/api/user/checkout", require("./routes/checkout"));
 
 mongoose.connection.once('open', () => {
   console.log('Connected to MongoDB')
