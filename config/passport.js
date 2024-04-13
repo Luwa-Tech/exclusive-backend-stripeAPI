@@ -37,13 +37,18 @@ const connectPassport = (passport) => {
     done(null, user.id);
   });
 
-  passport.deserializeUser(async (id, done) => {
-    try {
-      const user = await User.findById(id);
-      done(null, user);
-    } catch (err) {
-      done(err);
-    }
+  // passport.deserializeUser(async (id, done) => {
+  //   try {
+  //     const user = await User.findById(id);
+  //     done(null, user);
+  //   } catch (err) {
+  //     done(err);
+  //   }
+  // });
+
+  passport.deserializeUser((id, done) => {
+    const user = User.findById(id);
+    return done(null, user)
   });
 };
 
