@@ -15,6 +15,7 @@ const getUserCart = async (req, res) => {
 
 const addToCart = async (req, res) => {
     const { productId, stripeId } = req.body;
+    console.log(req.user)
 
     if (!productId || !stripeId) {
         return res.status(400).json({ "message": "ProductId and stripeId is required" });
