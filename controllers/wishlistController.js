@@ -1,12 +1,13 @@
 const Wishlist = require("../model/Wishlist");
 
 const getUserWishlist = async (req, res) => {
-    if (!req.user) {
-        return res.status(400).json({ "message": "User must be logged in" })
+    const {email} = req.body;
+    if (!email) {
+        return res.status(400).json({ "message": "Email is required" });
     }
 
     try {
-        const userWishlist = await Wishlist.findOne({ user: req.user._id }).populate("items");
+        const userWishlist = await Wishlist.findOne({ email: email }).populate("items");
         res.status(200).json(userWishlist);
     } catch (err) {
         res.status(500).json({ "message": `${err.message}` });
@@ -21,15 +22,21 @@ const addToWishlist = async (req, res) => {
     }
 
     try {
-        // Add product to user wishlist if not present and respond with updated document
+        let userWishlist = await Wishlist.findOne({email: email});
+        if (!userWishlist) {
+            userWishlist = new Wishlist({ email: email, items: [] });
+        }
 
-        //modify wishlist logic: --check if item is already in wishlist
-        const wishlist = await Wishlist.findOneAndUpdate(
-            { user: req.user._id },
-            { $addToSet: { items: productId } },
-            { new: true, upsert: true }
-        );
+        const isItemInWishlist = userWishlist.items.find(items => items.id === productId);
+        if (isItemInWishlist) {
+            res.json({"message": "Item already in Wishlist"});
+        } else {
+            userWishlist.items.push({
+                id: productId
+            })
+        }
         
+        await userWishlist.save();
         res.status(200).json({"message": "Product added to wishlist"});
 
     } catch (err) {
@@ -38,19 +45,21 @@ const addToWishlist = async (req, res) => {
 }
 
 const removeFromWishlist = async (req, res) => {
-    const { productId } = req.body;
+    const { productId, email } = req.body;
 
-    if (!productId) {
-        return res.status(400).json({ "message": "Product ID is required" });
+    if (!productId || !email) {
+        return res.status(400).json({ "message": "Product ID and Email is required" });
     }
 
     try {
 
         const wishlist = await Wishlist.findOneAndUpdate(
-            { user: req.user._id },
+            { email: email },
             { $pull: { items: productId } },
             { new: true, }
         );
+
+        await wishlist.save();
 
         res.status(200).json({"message": "Product removed to wishlist"});
 
