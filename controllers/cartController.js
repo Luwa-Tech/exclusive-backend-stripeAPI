@@ -1,7 +1,7 @@
 const Cart = require("../model/Cart");
 
 const getUserCart = async (req, res) => {
-    const {email} = req.body;
+    const email = req.query.email;
     if (!email) {
         return res.status(400).json({"message": "Email is required"});
     }
