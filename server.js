@@ -6,15 +6,9 @@ const corsOptions = require("./config/corsOptions");
 const credentials = require("./middleware/credentials");
 const cors = require("cors");
 const connectDB = require("./config/dbConn");
-const { auth } = require("express-oauth2-jwt-bearer");
+//const { auth } = require("express-oauth2-jwt-bearer");
 
 const PORT = process.env.PORT || 3500;
-
-const jwtCheck = auth({
-  audience: process.env.AUTH0_AUDIENCE,
-  issuerBaseURL: process.env.AUTH0_DOMAIN,
-  tokenSigningAlg: "RS256"
-});
 
 connectDB();
 
@@ -25,7 +19,13 @@ server.use(express.json());
 
 server.use("/products", require("./routes/product"));
 
-server.use(jwtCheck);
+// const jwtCheck = auth({
+//   audience: process.env.AUTH0_AUDIENCE,
+//   issuerBaseURL: process.env.AUTH0_DOMAIN,
+//   tokenSigningAlg: "RS256"
+// });
+
+//server.use(jwtCheck);
 
 server.use("/api/user/wishlist", require("./routes/wishlist"));
 server.use("/api/user/cart", require("./routes/cart"));
