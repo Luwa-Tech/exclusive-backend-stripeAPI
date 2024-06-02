@@ -1,11 +1,11 @@
-require("dotenv").config();
-
 const stripe = require("stripe")(process.env.STRIPE_KEY);
+const emptyUserCart = require("../services/emptyUserCart");
 
 const handleCheckout = async (req, res) => {
     const items = req.body.items;
-    if(!items) {
-        return res.status(400).json({"message": "Cart items is required!"});
+    const email = req.body.email;
+    if(!items || !email) {
+        return res.status(400).json({"message": "Cart items and Email is required!"});
     };
 
     let cartItems = [];
@@ -13,7 +13,7 @@ const handleCheckout = async (req, res) => {
         cartItems.push(
             {
                 price: item.stripeID,
-                quantity: item.qty
+                quantity: item.quantity
             }
         )
     });
@@ -21,9 +21,11 @@ const handleCheckout = async (req, res) => {
     const session = await stripe.checkout.sessions.create({
         line_items: cartItems,
         mode: "payment",
-        success_url: "https://exclusive-ecommerce-app.netlify.app/cart/success",
-        cancel_url:  "https://exclusive-ecommerce-app.netlify.app/cart/cancel"
+        success_url: `${process.env.CLIENT_PRODUCTION_URL}/cart/success`,
+        cancel_url:  `${process.env.CLIENT_PRODUCTION_URL}/cart/cancel`
     });
+
+    await emptyUserCart(email);
 
     res.send(JSON.stringify({
         url: session.url

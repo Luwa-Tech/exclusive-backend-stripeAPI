@@ -1,12 +1,16 @@
 const Cart = require("../model/Cart");
 
+// TODO
+// 1. Send updated item or all userCart and wishlist to the frontend
+
 const getUserCart = async (req, res) => {
-    if (!req.user) {
-        return res.status(401).json({"message": "Please log in to view your cart"});
+    const email = req.query.email;
+    if (!email) {
+        return res.status(400).json({ "message": "Email is required" });
     }
 
     try {
-        const cartItems = await Cart.findOne({ user: req.user._id }).populate("items");
+        const cartItems = await Cart.findOne({ email: email }).populate("items");
         res.status(200).json(cartItems);
     } catch (err) {
         res.status(500).json({ "message": "Internal server error" });
@@ -14,64 +18,89 @@ const getUserCart = async (req, res) => {
 }
 
 const addToCart = async (req, res) => {
-    const { productId, stripeId } = req.body;
+    const { productId, stripeId, email } = req.body;
 
-    if (!productId || !stripeId) {
-        return res.status(400).json({ "message": "ProductId and stripeId is required" });
+    // Refactor request info
+    if (!productId || !stripeId || !email) {
+        return res.status(400).json({ "message": "ProductId, stripeId and Email is required" });
     }
 
     try {
-        let statusCode;
-        const userCart = await Cart.findOne({ user: req.user._id});
+        // Find user cart
+        // Check if product is in cart
+        // Add if not else
+        // respond with a 204, item already in cart
+        // if (!userCart) {
+        //     userCart = new Cart({ email: email, items: [] });
+        // }
+
+        let userCart = await Cart.findOne({ email: email });
         const isItemInCart = userCart.items.find(items => items.id === productId);
-        
-        if (!isItemInCart) {
+        if (isItemInCart) {
+            res.status(204).json({"message": "Product already in cart"})
+        } else {
             userCart.items.push({
                 id: productId,
-                quantity: 1,
                 stripeID: stripeId
             })
-            statusCode = 201;
-        } else {
-            isItemInCart.quantity += 1;
-            statusCode = 200;
+            await userCart.save();
+            res.status(201).json({"message": "Product added to cart"});
         }
 
-        await userCart.save();
-        res.status(statusCode);
+    } catch (err) {
+        res.status(500).json({ "message": "Internal server error" });
+    }
+}
 
-    } catch (err){
+const increaseItemQty = async (req, res) => {
+    const { productId, email } = req.body;
+
+    if (!productId || !email) {
+        return res.status(400).json({ "message": "ProductId and Email is required" });
+    }
+
+    try {
+        const userCart = await Cart.findOne({ email: email });
+
+        const item = userCart.items.find(item => item.id === productId);
+        item.quantity += 1;
+        await userCart.save();
+
+        res.json({ "message": "Product quantity updated" });
+    } catch (err) {
         res.status(500).json({ "message": "Internal server error" });
     }
 }
 
 const decreaseItemQty = async (req, res) => {
-    const {productId} = req.body;
+    const { productId, email } = req.body;
 
-    if (!productId) {
-        return res.status(400).json({ "message": "ProductId is required" });
+    if (!productId || !email) {
+        return res.status(400).json({ "message": "ProductId and Email is required" });
     }
 
     try {
-        const userCart = await Cart.findOne({user: req.user._id});
+        const userCart = await Cart.findOne({ email: email });
+
         const item = userCart.items.find(item => item.id === productId);
         item.quantity -= 1;
         await userCart.save();
-        res.json({"message": "Product quantity updated"});
+
+        res.json({ "message": "Product quantity updated" });
     } catch (err) {
-        res.status(500).json({"message": "Internal server error"});
+        res.status(500).json({ "message": "Internal server error" });
     }
 }
 
 const removeFromCart = async (req, res) => {
-    const { productId } = req.body;
+    const { productId, email } = req.body;
 
-    if (!productId) {
-        return res.status(400).json({ "message": "ProductId is required" });
+    if (!productId || !email) {
+        return res.status(400).json({ "message": "ProductId and Email is required" });
     }
 
     try {
-        const userCart = await Cart.findOne({ user: req.user._id });
+        const userCart = await Cart.findOne({ email: email });
         userCart.items.pull({ id: productId });
         await userCart.save();
 
@@ -85,6 +114,7 @@ const removeFromCart = async (req, res) => {
 module.exports = {
     getUserCart,
     addToCart,
+    increaseItemQty,
     decreaseItemQty,
     removeFromCart
 }
