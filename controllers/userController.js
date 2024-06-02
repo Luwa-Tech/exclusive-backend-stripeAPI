@@ -54,7 +54,7 @@ const handleLogin = async (req, res, next) => {
             if (err) {
               return next(err);
             }
-            res.status(202).json({"message": "User logged in successfully"})
+            res.status(202).json({"message": "User logged in successfully", "user": user})
           });
     })(req, res, next);
 }
