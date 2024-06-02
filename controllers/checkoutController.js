@@ -21,10 +21,8 @@ const handleCheckout = async (req, res) => {
     const session = await stripe.checkout.sessions.create({
         line_items: cartItems,
         mode: "payment",
-        // success_url: `${process.env.CLIENT_PRODUCTION_URL}/cart/success`,
-        // cancel_url:  `${process.env.CLIENT_PRODUCTION_URL}/cart/cancel`
-        success_url: "http://localhost:5173/cart/success",
-        cancel_url: "http://localhost:5173/cart/cancel"
+        success_url: `${process.env.CLIENT_PRODUCTION_URL}/cart/success`,
+        cancel_url:  `${process.env.CLIENT_PRODUCTION_URL}/cart/cancel`
     });
 
     await emptyUserCart(email);
