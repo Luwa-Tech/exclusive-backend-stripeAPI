@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 const stripe = require("stripe")(process.env.STRIPE_KEY);
 
 const handleCheckout = async (req, res) => {
@@ -13,7 +11,7 @@ const handleCheckout = async (req, res) => {
         cartItems.push(
             {
                 price: item.stripeID,
-                quantity: item.qty
+                quantity: item.quantity
             }
         )
     });
