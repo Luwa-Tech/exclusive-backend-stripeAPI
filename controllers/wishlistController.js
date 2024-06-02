@@ -15,7 +15,7 @@ const getUserWishlist = async (req, res) => {
 }
 
 const addToWishlist = async (req, res) => {
-    const { productId } = req.body;
+    const { productId, email } = req.body;
 
     if (!productId) {
         return res.status(400).json({ "message": "Product ID is required" });
@@ -52,15 +52,18 @@ const removeFromWishlist = async (req, res) => {
     }
 
     try {
+        const wishlist = await Wishlist.findOne({email: email})
+        const isItemInWishlist = wishlist.items.find(items => items.id === productId);
 
-        const wishlist = await Wishlist.findOneAndUpdate(
-            { email: email },
-            { $pull: { items: productId } },
-            { new: true, }
-        );
+        if (!isItemInWishlist) {
+            res.status(204).json({"message": "Product not in wishlist"})
+        } else {
+            wishlist.items.pull({
+                id: productId
+            })
+        }
 
         await wishlist.save();
-
         res.status(200).json({"message": "Product removed to wishlist"});
 
     } catch (err) {
