@@ -1,5 +1,4 @@
 const stripe = require("stripe")(process.env.STRIPE_KEY);
-const emptyUserCart = require("../services/emptyUserCart");
 
 const handleCheckout = async (req, res) => {
     const items = req.body.items;
@@ -24,8 +23,6 @@ const handleCheckout = async (req, res) => {
         success_url: `${process.env.CLIENT_PRODUCTION_URL}/cart/success`,
         cancel_url:  `${process.env.CLIENT_PRODUCTION_URL}/cart/cancel`
     });
-
-    await emptyUserCart(email);
 
     res.send(JSON.stringify({
         url: session.url
