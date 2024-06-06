@@ -30,6 +30,7 @@ server.use("/products", require("./routes/product"));
 server.use("/api/user/wishlist", require("./routes/wishlist"));
 server.use("/api/user/cart", require("./routes/cart"));
 server.use("/api/user/checkout", require("./routes/checkout"));
+server.use("/stripe_webhooks", require("./routes/stripeWebhook"));
 
 mongoose.connection.once('open', () => {
   console.log('Connected to MongoDB')

@@ -1,6 +1,7 @@
 const Cart = require("../model/Cart");
 
-const emptyUserCart = async (email) => {
+const emptyUserCart = async (checkoutSession) => {
+    const email = checkoutSession.customer_email
     try {
         await Cart.updateOne({ email: email }, { $set: { items: [] } });
         console.log(`Cart for user ${email} cleared out`)
